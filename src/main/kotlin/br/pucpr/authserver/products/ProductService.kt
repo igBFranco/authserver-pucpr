@@ -8,7 +8,7 @@ class ProductService(
 ) {
     fun listAll(): List<Product> = productRepository.findAll()
 
-    fun findById(id: Long) = productRepository.findById(id).orElse(null)
+    fun findById(id: Long): Product = productRepository.findById(id).orElse(null)
 
     fun save(product: Product) = productRepository.save(product)
 

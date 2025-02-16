@@ -11,9 +11,7 @@ class Product(
 
     @NotBlank
     var name: String,
-
     var description: String? = null,
+    var price: BigDecimal,
 
-    @NotBlank
-    var price: BigDecimal
 )
