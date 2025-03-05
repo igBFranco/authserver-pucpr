@@ -1,6 +1,8 @@
 package br.pucpr.authserver.orders
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -21,6 +23,8 @@ class OrderController(
             ?: ResponseEntity.notFound().build()
 
     @DeleteMapping("/{orderId}/products/{productId}")
+    @SecurityRequirement(name = "AuthServer")
+    @PreAuthorize("permitAll()")
     fun removeProduct(@PathVariable orderId: Long, @PathVariable productId: Long) =
         orderService.removeProduct(orderId, productId)?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.notFound().build()

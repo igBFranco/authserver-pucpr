@@ -4,6 +4,7 @@ import br.pucpr.authserver.products.Product
 import br.pucpr.authserver.products.ProductRepository
 import br.pucpr.authserver.roles.Role
 import br.pucpr.authserver.roles.RoleRepository
+import br.pucpr.authserver.security.UserProperties
 import br.pucpr.authserver.users.User
 import br.pucpr.authserver.users.UserRepository
 import org.springframework.context.ApplicationListener
@@ -16,7 +17,8 @@ import java.math.BigDecimal
 class Bootstrapper(
     private val roleRepository: RoleRepository,
     private val userRepository: UserRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    val properties: UserProperties
 ): ApplicationListener<ContextRefreshedEvent> {
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         createRoles()
@@ -36,9 +38,9 @@ class Bootstrapper(
 
         if (userRepository.findByRole("ADMIN").isEmpty()) {
             val admin = User(
-                email = "admin@authserver.com",
-                password = "admin",
-                name = "Auth Server Administrator"
+                email = properties.email,
+                password = properties.password,
+                name = properties.name
             )
             admin.roles.add(adminRole)
             userRepository.save(admin)
