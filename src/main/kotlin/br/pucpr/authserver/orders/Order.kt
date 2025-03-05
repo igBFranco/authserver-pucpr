@@ -1,5 +1,6 @@
 package br.pucpr.authserver.orders
 import br.pucpr.authserver.products.Product
+import br.pucpr.authserver.users.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -17,5 +18,9 @@ class Order(
         joinColumns = [JoinColumn(name = "idOrder")],
         inverseJoinColumns = [JoinColumn(name = "idProduct")]
     )
-    val products: MutableList<Product> = mutableListOf()
+    val products: MutableList<Product> = mutableListOf(),
+
+    @ManyToOne
+    @JoinColumn(name= "userId")
+    val user: User? = null
 )

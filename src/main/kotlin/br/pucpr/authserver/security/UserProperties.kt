@@ -9,3 +9,11 @@ data class UserProperties @ConstructorBinding constructor(
     val email: String,
     val password: String,
 )
+
+@ConfigurationProperties(prefix = "security.user")
+data class NormalUserProperties @ConstructorBinding constructor(
+    val name: String,
+    val email: String,
+    val password: String,
+)
+

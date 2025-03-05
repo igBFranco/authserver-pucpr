@@ -4,6 +4,7 @@ import br.pucpr.authserver.products.Product
 import br.pucpr.authserver.products.ProductRepository
 import br.pucpr.authserver.roles.Role
 import br.pucpr.authserver.roles.RoleRepository
+import br.pucpr.authserver.security.NormalUserProperties
 import br.pucpr.authserver.security.UserProperties
 import br.pucpr.authserver.users.User
 import br.pucpr.authserver.users.UserRepository
@@ -18,11 +19,13 @@ class Bootstrapper(
     private val roleRepository: RoleRepository,
     private val userRepository: UserRepository,
     private val productRepository: ProductRepository,
-    val properties: UserProperties
+    val properties: UserProperties,
+    val normalUserProperties: NormalUserProperties,
 ): ApplicationListener<ContextRefreshedEvent> {
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         createRoles()
         createAdminUser()
+        createNormalUser()
         createProducts()
     }
 
@@ -44,6 +47,20 @@ class Bootstrapper(
             )
             admin.roles.add(adminRole)
             userRepository.save(admin)
+        }
+    }
+
+    fun createNormalUser() {
+        val userRole = roleRepository.findByIdOrNull("USER") ?: return
+
+        if (userRepository.findByRole("USER").isEmpty()) {
+            val normalUser = User(
+                email = normalUserProperties.email,
+                password = normalUserProperties.password,
+                name = normalUserProperties.name
+            )
+            normalUser.roles.add(userRole)
+            userRepository.save(normalUser)
         }
     }
 

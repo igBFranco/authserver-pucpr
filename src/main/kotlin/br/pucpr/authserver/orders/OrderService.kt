@@ -4,6 +4,8 @@ import br.pucpr.authserver.exception.BadRequestException
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.products.ProductRepository
 import br.pucpr.authserver.products.ProductService
+import br.pucpr.authserver.users.User
+import br.pucpr.authserver.users.UserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -11,6 +13,7 @@ import java.time.LocalDateTime
 class OrderService(
     val orderRepository: OrderRepository,
     val productRepository: ProductRepository,
+    val userRepository: UserRepository,
     private val productService: ProductService
 ) {
     fun listAll(): List<Order> = orderRepository.findAll()
@@ -19,16 +22,21 @@ class OrderService(
 
     fun save(order: Order) = orderRepository.save(order)
 
-    fun createOrder(request: OrderRequest): Order {
+    fun createOrder(request: OrderRequest, userId: Long): Order {
         val products = productRepository.findAllById(request.productIds)
 
         if (products.isEmpty()) {
             throw BadRequestException("No valid products found for the given IDs: ${request.productIds}")
         }
 
+        val user = userRepository.findById(userId).orElseThrow {
+            NotFoundException("User with ID $userId not found")
+        }
+
         val order = Order(
             date = LocalDateTime.now(),
-            products = products.toMutableList()
+            products = products.toMutableList(),
+            user = user
         )
 
         return orderRepository.save(order)
@@ -52,4 +60,9 @@ class OrderService(
         order.products.removeIf { it.id == productId }
         return orderRepository.save(order)
     }
+
+    fun delete(orderId: Long) {
+        orderRepository.deleteById(orderId)
+    }
+
 }

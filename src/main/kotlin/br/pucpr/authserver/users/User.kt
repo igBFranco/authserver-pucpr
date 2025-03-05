@@ -1,6 +1,7 @@
 package br.pucpr.authserver.users
 
 import br.pucpr.authserver.roles.Role
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
 import org.jetbrains.annotations.NotNull
@@ -15,6 +16,7 @@ class User(
     var name: String,
 
     @NotBlank
+    @JsonIgnore
     var password: String,
 
     @Column(unique = true, nullable = false)
